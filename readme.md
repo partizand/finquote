@@ -18,7 +18,7 @@ Micex
 
 Добавление модуля
 
-![Добавление модуля](../pic/quote-add.gif "text")
+![Добавление модуля](..master/pic/quote-add.gif "text")
 
     В GnuCash заводить ценные бумаги примерно так:
 
