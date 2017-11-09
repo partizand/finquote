@@ -16,8 +16,8 @@ Micex
 
 * Добавить в quote.pm (лежит на каталог выше), ссылку на новый модуль
 
-![Добавление модуля](../master/pic/gnucash-sample.gif)
+![Добавление модуля](../master/pic/quote-add.gif)
 
     В GnuCash заводить ценные бумаги примерно так:
 
-![Пример в GnuCash](../pic/gnucash-sample.gif "text")
+![Пример в GnuCash](../master/pic/gnucash-sample.gif)
