@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 
-#    Copyright (C) 2009, Andrey Kapustin <partizan-k@yandex.ru>
+#    Copyright (C) 2017, Partizand https://github.com/partizand/finquote
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -202,7 +202,7 @@ Finance::Quote::Moexbonds- Obtain quotes from Moex for ofz bonds
 
 	my $quoter = Finance::Quote->new("Moexbonds");
 	my %info = $quoter->fetch("moexbonds", "SU26208RMFS7"); # ОФЗ 26208
-	print "$info{'SU26208RMFS7','date'} $info{'SU26208RMFS7','last'}\n";
+	print "$info{'SU26208RMFS7','date'} $info{'SU26208RMFS7','price'}\n";
 
 =head1 DESCRIPTION
 
@@ -210,7 +210,7 @@ This module fetches bond share quotes information from the Moex http://www.moex.
 It fetches quotes for ofz bonds shares
  
 It's not loaded as default Finance::Quote module, so you need create it
- by Finance::Quote->new("Micex"). If you want it to load by default,
+ by Finance::Quote->new("Moexbonds"). If you want it to load by default,
  make changes to Finance::Quote default module loader, or use 
  FQ_LOAD_QUOTELET environment variable. Gnucash example:
 	FQ_LOAD_QUOTELET="-defaults Moexbonds" gnucash
@@ -219,11 +219,11 @@ It's not loaded as default Finance::Quote module, so you need create it
 
 The following labels may be returned by Finance::Quote::Moexbonds :
 
-name last price date isodate currency
+name price date isodate currency
  
 =head1 AUTHOR
 
-,Partizand, E<lt>partizan-k@yandex.ruE<gt>
+,Partizand, https://github.com/partizand/finquote
 
 =head1 COPYRIGHT AND LICENSE
 
