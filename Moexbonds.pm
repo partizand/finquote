@@ -186,44 +186,40 @@ sub _my_time {
 __END__
 =head1 NAME
 
-Finance::Quote::Micex- Obtain quotes from Micex
+Finance::Quote::Moexbonds- Obtain quotes from Moex for ofz bonds
 
 =head1 SYNOPSIS
 
 	use Finance::Quote;
 
-	my $quoter = Finance::Quote->new("Micex");
-	my %info = $quoter->fetch("micex", "ALFT"); # Aeroflot
-	print "$info{'ALFT','date'} $info{'ALFT','last'}\n";
+	my $quoter = Finance::Quote->new("Moexbonds");
+	my %info = $quoter->fetch("moexbonds", "SU26208RMFS7"); # ОФЗ 26208
+	print "$info{'SU26208RMFS7','date'} $info{'SU26208RMFS7','last'}\n";
 
 =head1 DESCRIPTION
 
-This module fetches share quotes information from the Micex  http://micex.ru. 
-It fetches quotes for all shares
+This module fetches bond share quotes information from the Moex http://www.moex.com. 
+It fetches quotes for ofz bonds shares
  
 It's not loaded as default Finance::Quote module, so you need create it
  by Finance::Quote->new("Micex"). If you want it to load by default,
  make changes to Finance::Quote default module loader, or use 
  FQ_LOAD_QUOTELET environment variable. Gnucash example:
-	FQ_LOAD_QUOTELET="-defaults Micex" gnucash
+	FQ_LOAD_QUOTELET="-defaults Moexbonds" gnucash
 
 =head1 LABELS RETURNED
 
-The following labels may be returned by Finance::Quote::Micex :
+The following labels may be returned by Finance::Quote::Moexbonds :
 
 name last price date isodate currency
  
-=head1 SEE ALSO
-
-Micex shares, http://export.rbc.ru .
-
 =head1 AUTHOR
 
-,Andrey Kapustin, E<lt>partizan-k@yandex.ruE<gt>
+,Partizand, E<lt>partizan-k@yandex.ruE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2010 by Andrey Kapustin. All rights reserved.
+Copyright (C) 2017 by Partizand. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.0.8 or,
