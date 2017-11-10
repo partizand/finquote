@@ -6,4 +6,8 @@ use Finance::Quote;
 
 my $ticker="SU26208RMFS7"; # ОФЗ 26208
 my %info = $quoter->fetch("moexbonds", $ticker); 
-print "$ticker date: $info{$ticker,'date'} price: $info{$ticker,'price'}\n";
+print "$ticker: \n";
+print "   date: $info{$ticker,'date'}\n";
+print "   price: $info{$ticker,'price'}\n";
+print "   currency: $info{$ticker,'currency'} \n";
+print "   isodate: $info{$ticker,'isodate'} \n";

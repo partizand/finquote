@@ -63,7 +63,7 @@ use HTTP::Request::Common;
 sub methods { return ( moexbonds => \&moexbonds ); }
 
 {
-	my @labels = qw/name price isodate currency/;
+	my @labels = qw/name price date isodate currency/;
 	
 	sub labels { return ( moexbonds => \@labels ); }
 }
@@ -108,7 +108,7 @@ sub moexbonds {
 		
 	my $content = $response->content; #http
 		
-	my $currency
+	my $currency; 
 	
 	foreach (split(/\n/,$content)) # split by lines
 		{
@@ -116,9 +116,7 @@ sub moexbonds {
 			{
 			last;
 			}
-		
-		
-		
+	
 		@q = split(/;/,$_); # split by columns
 		
 		$sym = $q[0]; #Код бумаги
@@ -134,7 +132,7 @@ sub moexbonds {
 					$info{$stock, "name"} = $stock; 
 					#$info{$stock, "currency"} = "RUB";
 					$currency = $q[$fields{'CURRENCYID'}];
-					if $currency eq "SUR"
+					if ($currency eq 'SUR')
 						{
 						$currency = "RUB";
 						}
@@ -146,7 +144,8 @@ sub moexbonds {
 					$info{$stock, "price"} = $q[$fields{'PREVLEGALCLOSEPRICE'}] * 10; 
 					
 				
-					$quoter->store_date(\%info, $stock,  {isodate => _my_time('isodate')});
+					#$quoter->store_date(\%info, $stock,  {isodate => _my_time('isodate')});
+					$quoter->store_date(\%info, $stock,  {isodate => $q[$fields{'PREVDATE'}]});
 					
 					$info{$stock, "success"} = 1;
 					$stockhash{$stock} = 1;
