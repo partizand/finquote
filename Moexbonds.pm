@@ -81,7 +81,8 @@ sub moexbonds {
 	my %fields = ("PREVDATE", 19,
 			   "CURRENCYID", 32,
 			   "PREVADMITTEDQUOTE", 18,
-			   "PREVLEGALCLOSEPRICE", 17);
+			   "PREVLEGALCLOSEPRICE", 17,
+			   "PREVWAPRICE", 3);
 	
 	my $ua = $quoter->user_agent; #http
 	
@@ -141,7 +142,7 @@ sub moexbonds {
 					
 					
 					
-					$info{$stock, "price"} = $q[$fields{'PREVLEGALCLOSEPRICE'}] * 10; 
+					$info{$stock, "price"} = $q[$fields{'PREVWAPRICE'}] * 10; 
 					
 				
 					#$quoter->store_date(\%info, $stock,  {isodate => _my_time('isodate')});
