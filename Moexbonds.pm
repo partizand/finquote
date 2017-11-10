@@ -29,6 +29,8 @@ use vars qw($VERSION);
 our $VERSION = '0.1';
 our $BONDS_URL = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/58/securities.csv?lang=RU&amp;security_collection=186";
 
+
+
 #securities
 #
 #SECID;BOARDID;SHORTNAME;PREVWAPRICE;YIELDATPREVWAPRICE;COUPONVALUE;NEXTCOUPON;ACCRUEDINT;PREVPRICE;LOTSIZE;FACEVALUE;BOARDNAME;STATUS;MATDATE;DECIMALS;COUPONPERIOD;ISSUESIZE;PREVLEGALCLOSEPRICE;PREVADMITTEDQUOTE;PREVDATE;SECNAME;REMARKS;MARKETCODE;INSTRID;SECTORID;MINSTEP;FACEUNIT;BUYBACKPRICE;BUYBACKDATE;ISIN;LATNAME;REGNUMBER;CURRENCYID;ISSUESIZEPLACED;LISTLEVEL;SECTYPE;COUPONPERCENT
@@ -46,6 +48,12 @@ our $BONDS_URL = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgrou
 #SU24019RMFS0;;;;;0;;;102.213;102.213;102.448;102.3;-0.026;-0.03;750;767250.00;7.97;13125.32;102.397;-0.045;0.05;0.052;7.92;-0.03;0;;102.397;102.336;-0.1;124;52869;54136030;926104;TQOB;N;19:14:28;661;;;-0.1;18:35:10;;;-0.045;;;102.302;102.302;102.397;;;318479;2017-11-09 09:21:08;54136030;8.07;
 #SU25081RMFS9;;;;;0;;;99.73;99.667;99.756;99.7;-0.047;-0.05;55;54835.00;7.63;938.06;99.708;0.032;0.04;0.04;7.6;-0.16;0;;99.709;99.659;0.04;202;162342;161868776;2769085;TQOB;N;19:14:28;84;;;0.038;18:49:27;;;0.032;;;99.7;99.7;99.709;;;318479;2017-11-08 19:29:28;161868776;;
 
+#PREVDATE;Дата последних торгов;Дата последних торгов;0;0;1;;0;0;date;;0
+#CURRENCYID;Сопр. валюта инструмента;Сопр. валюта инструмента;0;0;1;;0;0;string;;0
+#PREVADMITTEDQUOTE;Признаваемая котировка предыдущего дня;Признаваемая котировка предыдущего дня;0;0;1;;0;0;number;;0
+#PREVLEGALCLOSEPRICE;Официальная цена закрытия предыдущего дня;Официальная цена закрытия предыдущего дня;0;0;1;;0;0;number;;0
+#1940;PREVWAPRICE;Средневзвешенная цена предыдущего дня, % к номиналу;Средневзвешенная цена предыдущего дня, % к номиналу;0;0;1;;0;0;number;;0
+#1931;PREVPRICE;Последняя цена пред. дня;Цена последней сделки предыдущего торгового дня, % к номиналу;0;0;0;;0;0;number;;0
 
 use LWP::UserAgent;
 use HTTP::Request::Common;
@@ -55,7 +63,7 @@ use HTTP::Request::Common;
 sub methods { return ( moexbonds => \&moexbonds ); }
 
 {
-	my @labels = qw/name last open low high close waprica date isodate currency/;
+	my @labels = qw/name price isodate currency/;
 	
 	sub labels { return ( moexbonds => \@labels ); }
 }
@@ -69,6 +77,11 @@ sub moexbonds {
 	my %stockhash;
 	my @q;
 	
+	# Номера столбцов полей
+	my %fields = ("PREVDATE", 19,
+			   "CURRENCYID", 32,
+			   "PREVADMITTEDQUOTE", 18,
+			   "PREVLEGALCLOSEPRICE", 17);
 	
 	my $ua = $quoter->user_agent; #http
 	
@@ -95,19 +108,16 @@ sub moexbonds {
 		
 	my $content = $response->content; #http
 		
-	my $ismarketdata = 0; # Признак раздела с котировками
+	my $currency
 	
 	foreach (split(/\n/,$content)) # split by lines
 		{
-		if ($_ eq 'marketdata') # Ищем раздел marketdata, до него все игнорируем
-			{$ismarketdata = 1;
-			next;
+		if ($_ eq 'marketdata') # После раздела marketdata все игнорируем
+			{
+			last;
 			}
 		
-		if ($ismarketdata == 0) # Еще не в нужном разделе
-			{
-			next;
-			}
+		
 		
 		@q = split(/;/,$_); # split by columns
 		
@@ -122,22 +132,20 @@ sub moexbonds {
 					#print (Msg "Found sym $stock close=$q[5] date=$q[1] \n");
 					$info{$stock, "symbol"} = $stock; #Код
 					$info{$stock, "name"} = $stock; 
-					$info{$stock, "currency"} = "RUB";
+					#$info{$stock, "currency"} = "RUB";
+					$currency = $q[$fields{'CURRENCYID'}];
+					if $currency eq "SUR"
+						{
+						$currency = "RUB";
+						}
+					$info{$stock, "currency"} = $currency;
 					$info{$stock, "method"} = "moexbonds";
-					$info{$stock, "open"} = $q[8];
-					#$info{$stock, "price"} = $q[46];
 					
-					$info{$stock, "high"} = $q[10];
-					$info{$stock, "low"} = $q[9];
 					
-					$info{$stock, "waprice"} = $q[18];
-					$info{$stock, "close"} = $q[47];
 					
-					$info{$stock, "last"} = $q[27]; #$q[11];
-					$info{$stock, "last"} = $info{$stock, "last"} *10;
+					$info{$stock, "price"} = $q[$fields{'PREVLEGALCLOSEPRICE'}] * 10; 
 					
-					#$info{$stock, "price"} = $info{$stock, "last"}
-					
+				
 					$quoter->store_date(\%info, $stock,  {isodate => _my_time('isodate')});
 					
 					$info{$stock, "success"} = 1;
