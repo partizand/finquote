@@ -29,9 +29,9 @@ use vars qw($VERSION);
 
 our $VERSION = '0.1';
 # T+1 (ОФЗ)
-#our $BONDS_URL = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/58/securities.csv";
+our $BONDS_URL_T1 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/58/securities.csv";
 # T0 (Всё остальное)
-our $BONDS_URL = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/7/securities.csv";
+our $BONDS_URL_T0 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/7/securities.csv";
 
 #PREVDATE;Дата последних торгов;Дата последних торгов;0;0;1;;0;0;date;;0
 #CURRENCYID;Сопр. валюта инструмента;Сопр. валюта инструмента;0;0;1;;0;0;string;;0
@@ -43,15 +43,29 @@ our $BONDS_URL = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgrou
 use LWP::UserAgent;
 use HTTP::Request::Common;
 
-sub methods { return ( moexbonds => \&moexbonds ); }
+sub methods { return (moexbondt0       => \&moexbondt0,
+                      moexbondt1         => \&moexbondt1) }
 
 {
-	my @labels = qw/name price date isodate currency/;
-	
-	sub labels { return ( moexbonds => \@labels ); }
+  my @labels = qw/name price date isodate currency/;
+
+  sub labels { return (moexbondt0       => \@labels,
+                       moexbondt0        => \@labels) }
 }
 
-sub moexbonds {
+sub moexbondt1
+	{
+	return moexbond ($BONDS_URL_T1, @_);
+	}
+	
+sub moexbondt0
+	{
+	return moexbond ($BONDS_URL_T0, @_);
+	}
+
+
+sub moexbond {
+	my $url = shift;
 	my $quoter = shift;
 	my @stocks = @_;
 	my $sym;
@@ -75,7 +89,7 @@ sub moexbonds {
 	  }
 
 	
-	my $url=$BONDS_URL;
+	#my $url=$BONDS_URL;
 	
 	my $response = $ua->request(GET $url); #http begin
 	
