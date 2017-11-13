@@ -182,13 +182,13 @@ Finance::Quote::Moexbonds- Obtain quotes from Moex for bonds
 	use Finance::Quote;
 
 	my $quoter = Finance::Quote->new("Moexbonds");
-	my %info = $quoter->fetch("moexbonds", "SU26208RMFS7"); # ОФЗ 26208
-	print "$info{'SU26208RMFS7','date'} $info{'SU26208RMFS7','price'}\n";
+	my %info = $quoter->fetch("moex_bond_ofz", "SU26218RMFS6"); # ОФЗ 26218
+	print "$info{'SU26218RMFS6','date'} $info{'SU26218RMFS6','price'}\n";
 
 =head1 DESCRIPTION
 
 This module fetches bond share quotes information from the Moex http://www.moex.com. 
-It fetches quotes for ofz bonds shares
+It fetches quotes for bonds shares
  
 It's not loaded as default Finance::Quote module, so you need create it
  by Finance::Quote->new("Moexbonds"). If you want it to load by default,
