@@ -43,28 +43,27 @@ our $BONDS_URL_T0 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardg
 use LWP::UserAgent;
 use HTTP::Request::Common;
 
-sub methods { return (moexbondt0       => \&moexbondt0,
-                      moexbondt1         => \&moexbondt1) }
+sub methods { return (moex_bond_t0 => \&moex_bond_t0,
+                      moex_bond_t1 => \&moex_bond_t1) }
 
 {
   my @labels = qw/name price date isodate currency/;
 
-  sub labels { return (moexbondt0       => \@labels,
-                       moexbondt0        => \@labels) }
+  sub labels { return (moexbondt0 => \@labels,
+                       moexbondofz => \@labels) }
 }
-
-sub moexbondt1
-	{
-	return moexbond ($BONDS_URL_T1, @_);
-	}
 	
-sub moexbondt0
+sub moex_bond_t1
 	{
-	return moexbond ($BONDS_URL_T0, @_);
+	&moexbonds($BONDS_URL_T1, @_);
 	}
 
+sub moex_bond_t0
+	{
+	&moexbonds($BONDS_URL_T0, @_);
+	}
 
-sub moexbond {
+sub moexbonds {
 	my $url = shift;
 	my $quoter = shift;
 	my @stocks = @_;
@@ -73,6 +72,8 @@ sub moexbond {
 	my %info;
 	my %stockhash;
 	my @q;
+	
+	my $price;
 	
 	# Номера столбцов полей
 	my %fields = ("PREVDATE", 19,
@@ -89,7 +90,7 @@ sub moexbond {
 	  }
 
 	
-	#my $url=$BONDS_URL;
+	#my $url=$BONDS_URL_T1;
 	
 	my $response = $ua->request(GET $url); #http begin
 	
@@ -139,14 +140,19 @@ sub moexbond {
 					
 					
 					
-					$info{$stock, "price"} = $q[$fields{'PREVWAPRICE'}] * 10; 
+					$price = $q[$fields{'PREVWAPRICE'}];
+					if ($price)
+						{$info{$stock, "price"} = $price * 10;
+						$stockhash{$stock} = 1;
+						$info{$stock, "success"} = 1;
+						}
 					
 				
 					#$quoter->store_date(\%info, $stock,  {isodate => _my_time('isodate')});
 					$quoter->store_date(\%info, $stock,  {isodate => $q[$fields{'PREVDATE'}]});
 					
-					$info{$stock, "success"} = 1;
-					$stockhash{$stock} = 1;
+					
+					
 					#print ("Found sym $stock last=$info{$stock,'last'} date=$info{$stock,'date'} \n");  
 				
 					}

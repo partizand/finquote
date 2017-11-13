@@ -5,7 +5,7 @@ use Finance::Quote;
 # my $module = "Moexbondt0";
 my $module = "Moexbonds";
 
-my $method = "moexbondt1";
+my $method = "moexbondofz";
 my $quoter = Finance::Quote->new($module);
 
 my $ticker="SU26218RMFS6"; # ОФЗ 26218
