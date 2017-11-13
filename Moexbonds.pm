@@ -43,22 +43,22 @@ our $BONDS_URL_T0 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardg
 use LWP::UserAgent;
 use HTTP::Request::Common;
 
-sub methods { return (moex_bond_t0 => \&moex_bond_t0,
-                      moex_bond_t1 => \&moex_bond_t1) }
+sub methods { return (moex_bond => \&moex_bond,
+                      moex_bond_ofz => \&moex_bond_ofz) }
 
 {
   my @labels = qw/name price date isodate currency/;
 
-  sub labels { return (moexbondt0 => \@labels,
-                       moexbondofz => \@labels) }
+  sub labels { return (moex_bond => \@labels,
+                       moex_bond_ofz => \@labels) }
 }
 	
-sub moex_bond_t1
+sub moex_bond_ofz
 	{
 	&moexbonds($BONDS_URL_T1, @_);
 	}
 
-sub moex_bond_t0
+sub moex_bond
 	{
 	&moexbonds($BONDS_URL_T0, @_);
 	}
@@ -76,11 +76,11 @@ sub moexbonds {
 	my $price;
 	
 	# Номера столбцов полей
-	my %fields = ("PREVDATE", 19,
-			   "CURRENCYID", 32,
-			   "PREVADMITTEDQUOTE", 18,
-			   "PREVLEGALCLOSEPRICE", 17,
-			   "PREVWAPRICE", 3);
+	my %fields = ("PREVDATE", 19, # Дата последних торгов
+			   "CURRENCYID", 32, #Сопр. валюта инструмента
+			   "PREVADMITTEDQUOTE", 18, #PREVADMITTEDQUOTE;Признаваемая котировка предыдущего дня
+			   "PREVLEGALCLOSEPRICE", 17, #PREVLEGALCLOSEPRICE;Официальная цена закрытия предыдущего дня
+			   "PREVWAPRICE", 3); #PREVWAPRICE;Средневзвешенная цена предыдущего дня, % к номиналу
 	
 	my $ua = $quoter->user_agent; #http
 	
