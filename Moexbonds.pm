@@ -33,13 +33,6 @@ our $BONDS_URL_T1 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardg
 # T0 (Всё остальное)
 our $BONDS_URL_T0 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/7/securities.csv";
 
-#PREVDATE;Дата последних торгов;Дата последних торгов;0;0;1;;0;0;date;;0
-#CURRENCYID;Сопр. валюта инструмента;Сопр. валюта инструмента;0;0;1;;0;0;string;;0
-#PREVADMITTEDQUOTE;Признаваемая котировка предыдущего дня;Признаваемая котировка предыдущего дня;0;0;1;;0;0;number;;0
-#PREVLEGALCLOSEPRICE;Официальная цена закрытия предыдущего дня;Официальная цена закрытия предыдущего дня;0;0;1;;0;0;number;;0
-#1940;PREVWAPRICE;Средневзвешенная цена предыдущего дня, % к номиналу;Средневзвешенная цена предыдущего дня, % к номиналу;0;0;1;;0;0;number;;0
-#1931;PREVPRICE;Последняя цена пред. дня;Цена последней сделки предыдущего торгового дня, % к номиналу;0;0;0;;0;0;number;;0
-
 use LWP::UserAgent;
 use HTTP::Request::Common;
 
