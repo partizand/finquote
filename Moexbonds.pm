@@ -17,7 +17,7 @@
 # Получает цены облигаций на ММВБ
 # Получает средневзвешенную цену предыдущего дня.
 
-package Finance::Quote::Moexbonds;
+package Finance::Quote::Moex;
 
 use 5.000000;
 use strict;
@@ -69,11 +69,11 @@ sub moexbonds {
 	my $price;
 	
 	# Номера столбцов полей
-	my %fields = ("PREVDATE", 19, # Дата последних торгов
-			   "CURRENCYID", 32, #Сопр. валюта инструмента
-			   "PREVADMITTEDQUOTE", 18, #PREVADMITTEDQUOTE;Признаваемая котировка предыдущего дня
-			   "PREVLEGALCLOSEPRICE", 17, #PREVLEGALCLOSEPRICE;Официальная цена закрытия предыдущего дня
-			   "PREVWAPRICE", 3); #PREVWAPRICE;Средневзвешенная цена предыдущего дня, % к номиналу
+	#my %fields = ("PREVDATE", 19, # Дата последних торгов
+	#		   "CURRENCYID", 32, #Сопр. валюта инструмента
+	#		   "PREVADMITTEDQUOTE", 18, #PREVADMITTEDQUOTE;Признаваемая котировка предыдущего дня
+	#		   "PREVLEGALCLOSEPRICE", 17, #PREVLEGALCLOSEPRICE;Официальная цена закрытия предыдущего дня
+	#		   "PREVWAPRICE", 3); #PREVWAPRICE;Средневзвешенная цена предыдущего дня, % к номиналу
 	
 	my $ua = $quoter->user_agent; #http
 	
@@ -102,16 +102,25 @@ sub moexbonds {
 		
 	my $currency; 
 	
-	foreach (split(/\n/,$content)) # split by lines
+	my @lines = split(/\n/,$content); # split by lines
+	
+	
+	
+	shift @lines;
+	shift @lines;
+	
+	my %fields = &getfields(shift @lines);
+	
+	foreach (@lines) 
 		{
-		if ($_ eq 'marketdata') # После раздела marketdata все игнорируем
+		if ($_ eq "") # После пустой строки все игнорируем
 			{
 			last;
 			}
 	
 		@q = split(/;/,$_); # split by columns
 		
-		$sym = $q[0]; #Код бумаги
+		$sym = $q[$fields{'SECID'}]; #Код бумаги
 		if ($sym) 
 			{		      
 			foreach my $stock (@stocks) 
@@ -121,7 +130,7 @@ sub moexbonds {
 				
 					#print (Msg "Found sym $stock close=$q[5] date=$q[1] \n");
 					$info{$stock, "symbol"} = $stock; #Код
-					$info{$stock, "name"} = $stock; 
+					$info{$stock, "name"} = $q[$fields{'SHORTNAME'}]; 
 					#$info{$stock, "currency"} = "RUB";
 					$currency = $q[$fields{'CURRENCYID'}];
 					if ($currency eq 'SUR')
@@ -129,7 +138,7 @@ sub moexbonds {
 						$currency = "RUB";
 						}
 					$info{$stock, "currency"} = $currency;
-					$info{$stock, "method"} = "moexbonds";
+					$info{$stock, "method"} = "moex";
 					
 					
 					
@@ -169,7 +178,22 @@ sub moexbonds {
 		
 	
 }
-
+# возвращает ассоциативный массив - ключ - имя поля, значение - порядковый номр колонки
+# По строке с названиями полей ИмяПоля;ИмяПоля1;ИмяПоля2
+sub getfields
+	{
+	my $head_line = @_;
+	
+	my @fields_names = split(/;/,$head_line); # split by columns
+	my $i=0;
+	my %fields;
+	foreach my $field_name (fields_names)
+		{
+		$fields{$field_name} = $i;
+		$i = $i + 1;
+		}
+	return wantarray() ? %fields : \%fields;
+	}
 
 1;
 __END__
