@@ -21,7 +21,7 @@
     @modules = qw/AEX AIAHK ASEGR ASX BMONesbittBurns BSERO Bourso
             Cdnfundlibrary Citywire CSE Currencies Deka DWS FTPortfolios Fidelity FidelityFixed
             FinanceCanada Fool FTfunds HU GoldMoney HEX IndiaMutual LeRevenu
-            ManInvestments Morningstar MorningstarJP MStaruk NZX Platinum Micex Moexbonds
+            ManInvestments Morningstar MorningstarJP MStaruk NZX Platinum Micex Moex
             SEB SIXfunds SIXshares StockHouseCanada TSP TSX Tdefunds
             Tdwaterhouse Tiaacref TNetuk Troweprice Trustnet Union USFedBonds
             VWD ZA Cominvest Finanzpartner YahooJSON Yahoo::Asia
@@ -36,7 +36,7 @@
 Можно не редактировать quote.pm, а установить переменную среды перед запуском GnuCash
 
 ```
-FQ_LOAD_QUOTELET="-defaults Micex Moexbonds"
+FQ_LOAD_QUOTELET="-defaults Micex Moex"
 ```
 
 В GnuCash заводить ценные бумаги примерно так:
@@ -47,7 +47,7 @@ FQ_LOAD_QUOTELET="-defaults Micex Moexbonds"
 Облигации
 ---------
 
-Модуль Moexbonds.pm 
+Модуль Moex.pm 
 
 Получает средневзвешенную цену предыдущего дня для облигаций на ММВБ
 
