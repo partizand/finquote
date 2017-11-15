@@ -13,8 +13,7 @@
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 
-
-# Получает цены облигаций на ММВБ
+# Получает котировки предыдущего торгового дня на ММВБ
 # Получает средневзвешенную цену предыдущего дня.
 
 package Finance::Quote::Moex;
@@ -27,39 +26,50 @@ use warnings;
 use vars qw($VERSION);
 
 
-our $VERSION = '0.1';
-# T+1 (ОФЗ)
+our $VERSION = '0.2';
+# Облигации T+1 (ОФЗ)
 our $BONDS_URL_T1 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/58/securities.csv";
-# T0 (Всё остальное)
+# Облигации T0 (Всё остальное)
 our $BONDS_URL_T0 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/7/securities.csv";
+# Акции 
+our $STOCK_URL = "https://iss.moex.com/iss/engines/stock/markets/shares/boardgroups/57/securities.csv";
 
 use LWP::UserAgent;
 use HTTP::Request::Common;
 
 sub methods { return (moex_bond => \&moex_bond,
-                      moex_bond_ofz => \&moex_bond_ofz) }
+                      moex_bond_ofz => \&moex_bond_ofz,
+					  moex_stock => \&moex_stock) }
 
 {
   my @labels = qw/name price date isodate currency/;
 
   sub labels { return (moex_bond => \@labels,
-                       moex_bond_ofz => \@labels) }
+                       moex_bond_ofz => \@labels,
+					   moex_stock => \@labels) }
 }
 	
 sub moex_bond_ofz
 	{
-	&moexbonds($BONDS_URL_T1, @_);
+	&moex($BONDS_URL_T1, "1", @_);
 	}
 
 sub moex_bond
 	{
-	&moexbonds($BONDS_URL_T0, @_);
+	&moex($BONDS_URL_T0, "1", @_);
+	}
+	
+sub moex_stock
+	{
+	&moex($STOCK_URL, "", @_);
 	}
 
-sub moexbonds {
+sub moex {
 	my $url = shift;
+	my $is_bond = shift;
 	my $quoter = shift;
 	my @stocks = @_;
+	
 	my $sym;
 	my $stock;
 	my %info;
@@ -67,24 +77,25 @@ sub moexbonds {
 	my @q;
 	
 	my $price;
-	
-	# Номера столбцов полей
-	#my %fields = ("PREVDATE", 19, # Дата последних торгов
-	#		   "CURRENCYID", 32, #Сопр. валюта инструмента
-	#		   "PREVADMITTEDQUOTE", 18, #PREVADMITTEDQUOTE;Признаваемая котировка предыдущего дня
-	#		   "PREVLEGALCLOSEPRICE", 17, #PREVLEGALCLOSEPRICE;Официальная цена закрытия предыдущего дня
-	#		   "PREVWAPRICE", 3); #PREVWAPRICE;Средневзвешенная цена предыдущего дня, % к номиналу
-	
-	my $ua = $quoter->user_agent; #http
+	my $price_field;
+	my $currency;
 	
 	foreach my $stock (@stocks) # Обнуляем признаки обработки тикеров
 	  {
 	   $stockhash{$stock} = 0;
 	  }
 
+	if ($is_bond)
+		{
+		$price_field = "PREVWAPRICE"; # Колонка с ценой для облигаций (средневзвешенная цена)
+		}
+	else
+		{
+		$price_field = "PREVLEGALCLOSEPRICE"; # Колонка с ценой для акций (цена закрытия)
+		}
 	
-	#my $url=$BONDS_URL_T1;
 	
+	my $ua = $quoter->user_agent; #http
 	my $response = $ua->request(GET $url); #http begin
 	
 	unless ($response->is_success) 
@@ -99,12 +110,8 @@ sub moexbonds {
 		} #http end
 		
 	my $content = $response->content; #http
-		
-	my $currency; 
 	
 	my @lines = split(/\n/,$content); # split by lines
-	
-	
 	
 	shift @lines;
 	shift @lines;
@@ -130,8 +137,9 @@ sub moexbonds {
 				
 					#print (Msg "Found sym $stock close=$q[5] date=$q[1] \n");
 					$info{$stock, "symbol"} = $stock; #Код
-					$info{$stock, "name"} = $q[$fields{'SHORTNAME'}]; 
-					#$info{$stock, "currency"} = "RUB";
+					$info{$stock, "name"} = $stock; 
+					#$info{$stock, "shortname"} = $q[$fields{'SHORTNAME'}]; 
+					
 					$currency = $q[$fields{'CURRENCYID'}];
 					if ($currency eq 'SUR')
 						{
@@ -140,23 +148,21 @@ sub moexbonds {
 					$info{$stock, "currency"} = $currency;
 					$info{$stock, "method"} = "moex";
 					
-					
-					
-					$price = $q[$fields{'PREVWAPRICE'}];
+					$price = $q[$fields{$price_field}];
 					if ($price)
-						{$info{$stock, "price"} = $price * 10;
+						{
+						if ($is_bond)
+							{$price = $price * 10;
+							}
+						$info{$stock, "price"} = $price;
 						$stockhash{$stock} = 1;
 						$info{$stock, "success"} = 1;
 						}
-					
 				
 					#$quoter->store_date(\%info, $stock,  {isodate => _my_time('isodate')});
 					$quoter->store_date(\%info, $stock,  {isodate => $q[$fields{'PREVDATE'}]});
 					
-					
-					
 					#print ("Found sym $stock last=$info{$stock,'last'} date=$info{$stock,'date'} \n");  
-				
 					}
 				}
 			}
@@ -173,7 +179,6 @@ sub moexbonds {
 			}
 		}
 		
-		
 	return wantarray() ? %info : \%info;
 		
 	
@@ -182,12 +187,12 @@ sub moexbonds {
 # По строке с названиями полей ИмяПоля;ИмяПоля1;ИмяПоля2
 sub getfields
 	{
-	my $head_line = @_;
+	my ($head_line) = @_;
 	
 	my @fields_names = split(/;/,$head_line); # split by columns
 	my $i=0;
 	my %fields;
-	foreach my $field_name (fields_names)
+	foreach my $field_name (@fields_names)
 		{
 		$fields{$field_name} = $i;
 		$i = $i + 1;
@@ -199,30 +204,29 @@ sub getfields
 __END__
 =head1 NAME
 
-Finance::Quote::Moexbonds- Obtain quotes from Moex for bonds
+Finance::Quote::Moex - Obtain quotes from Moex 
 
 =head1 SYNOPSIS
 
 	use Finance::Quote;
 
-	my $quoter = Finance::Quote->new("Moexbonds");
+	my $quoter = Finance::Quote->new("Moex");
 	my %info = $quoter->fetch("moex_bond_ofz", "SU26218RMFS6"); # ОФЗ 26218
 	print "$info{'SU26218RMFS6','date'} $info{'SU26218RMFS6','price'}\n";
 
 =head1 DESCRIPTION
 
 This module fetches bond share quotes information from the Moex http://www.moex.com. 
-It fetches quotes for bonds shares
  
 It's not loaded as default Finance::Quote module, so you need create it
- by Finance::Quote->new("Moexbonds"). If you want it to load by default,
+ by Finance::Quote->new("Moex"). If you want it to load by default,
  make changes to Finance::Quote default module loader, or use 
  FQ_LOAD_QUOTELET environment variable. Gnucash example:
-	FQ_LOAD_QUOTELET="-defaults Moexbonds" gnucash
+	FQ_LOAD_QUOTELET="-defaults Moex" gnucash
 
 =head1 LABELS RETURNED
 
-The following labels may be returned by Finance::Quote::Moexbonds :
+The following labels may be returned by Finance::Quote::Moex :
 
 name price date isodate currency
  
