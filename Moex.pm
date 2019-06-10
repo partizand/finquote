@@ -37,16 +37,40 @@ our $STOCK_URL = "https://iss.moex.com/iss/engines/stock/markets/shares/boardgro
 use LWP::UserAgent;
 use HTTP::Request::Common;
 
+# Возможные методы
+
+# moex_bond_ofz
+# Облигации T+1 (ОФЗ). Цена не включает НКД
+
+# moex_bond_ofz_nkd
+# Облигации T+1 (ОФЗ). Цена включает НКД
+
+# moex_bond
+# Облигации T0 (Всё остальное). Цена не включает НКД
+
+# moex_bond_nkd
+# Облигации T0 (Всё остальное). Цена включает НКД
+
+# moex_stock
+# Акции
+
+
+
 sub methods { return (moex_bond => \&moex_bond,
                       moex_bond_ofz => \&moex_bond_ofz,
-					  moex_stock => \&moex_stock) }
+					  moex_stock => \&moex_stock,
+					  moex_bond_nkd => \&moex_bond_nkd,
+                      moex_bond_ofz_nkd => \&moex_bond_ofz_nkd) 
+					  }
 
 {
   my @labels = qw/name price date isodate currency/;
 
   sub labels { return (moex_bond => \@labels,
                        moex_bond_ofz => \@labels,
-					   moex_stock => \@labels) }
+					   moex_stock => \@labels,
+					   moex_bond_nkd => \@labels,
+                       moex_bond_ofz_nkd => \@labels) }
 }
 	
 sub moex_bond_ofz
@@ -58,7 +82,16 @@ sub moex_bond
 	{
 	&moex($BONDS_URL_T0, "1", @_);
 	}
-	
+sub moex_bond_ofz_nkd
+	{
+	&moex($BONDS_URL_T1, "2", @_);
+	}
+
+sub moex_bond_nkd
+	{
+	&moex($BONDS_URL_T0, "2", @_);
+	}
+		
 sub moex_stock
 	{
 	&moex($STOCK_URL, "", @_);
@@ -78,6 +111,7 @@ sub moex {
 	
 	my $price;
 	my $price_field;
+	my $nkd_field;
 	my $currency;
 	
 	foreach my $stock (@stocks) # Обнуляем признаки обработки тикеров
@@ -88,6 +122,7 @@ sub moex {
 	if ($is_bond)
 		{
 		$price_field = "PREVWAPRICE"; # Колонка с ценой для облигаций (средневзвешенная цена)
+		$nkd_field = "ACCRUEDINT"; # Колнока с НКД для облигаций
 		}
 	else
 		{
@@ -152,8 +187,14 @@ sub moex {
 					if ($price)
 						{
 						if ($is_bond)
-							{$price = $price * 10;
+							{
+							$price = $price * 10;
+							if ($is_bond=="2")
+								{
+								$price = $price+$q[$fields{$nkd_field}]; # Прибавляем к цене облигации стоимость НКД
+								}
 							}
+							
 						$info{$stock, "price"} = $price;
 						$stockhash{$stock} = 1;
 						$info{$stock, "success"} = 1;
