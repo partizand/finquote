@@ -1,12 +1,46 @@
-Котировки для российских инструментов
-=====================================
+Perl модуль Finance::Quote::Moex
+================================
 
-Получает онлайн котировки российских инструментов используя perl [Finance::Quote](https://github.com/finance-quote/finance-quote)
+Получает онлайн котировки российских инструментов с биржи ММВБ используя perl [Finance::Quote](https://github.com/finance-quote/finance-quote)
 
 Сделано для [GnuCash](http://www.gnucash.org/)
 
+Котировки получаются с сайтов http://rbc.ru и http://moex.com
+
 Установка
 ---------
+
+Все виды установок не изменяют модуль загрузки Finance::Quote. Поэтому по умолчанию в GnuCash модуль будет не доступен. Для включения установите переменную среды перед запуском GnuCash. 
+
+```bash
+FQ_LOAD_QUOTELET="-defaults Moex" gnucash
+```
+
+Или поправьте модуль загрузки, как это писано в ручной установке.
+
+Установка на Debian/Ubuntu
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Установите пакет .deb из [releases](https://github.com/partizand/finquote/releases)
+
+Ручная сборка
+~~~~~~~~~~~~~
+
+```
+make
+make install
+```
+
+`make install` плохая команда. Попробуйте вместо неё `checkinstall`
+
+На Windows вроде make нет.
+
+Возможно удастся разместить на cpan
+
+Ручная установка (не рекомендуется)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Для Windows сойдёт.
 
 * Скопировать все файлы *.pm в каталог Finance/Quote (Для Win обычно c:\strawberry\perl\site\lib\Finance\Quote\, для linux /usr/share/perl5/Finance/quote)
 
@@ -21,7 +55,7 @@
     @modules = qw/AEX AIAHK ASEGR ASX BMONesbittBurns BSERO Bourso
             Cdnfundlibrary Citywire CSE Currencies Deka DWS FTPortfolios Fidelity FidelityFixed
             FinanceCanada Fool FTfunds HU GoldMoney HEX IndiaMutual LeRevenu
-            ManInvestments Morningstar MorningstarJP MStaruk NZX Platinum Micex Moex
+            ManInvestments Morningstar MorningstarJP MStaruk NZX Platinum Moex
             SEB SIXfunds SIXshares StockHouseCanada TSP TSX Tdefunds
             Tdwaterhouse Tiaacref TNetuk Troweprice Trustnet Union USFedBonds
             VWD ZA Cominvest Finanzpartner YahooJSON Yahoo::Asia
@@ -32,6 +66,8 @@
 ```
 
 ![Добавление модуля](../master/pic/quote-add.gif)
+
+Micex включил в Moex, поэтому модуль убрал.
 
 Можно не редактировать quote.pm, а установить переменную среды перед запуском GnuCash
 
@@ -44,14 +80,15 @@ FQ_LOAD_QUOTELET="-defaults Micex Moex"
 ![Пример в GnuCash](../master/pic/gnucash-sample.gif)
 
 
-Облигации
----------
+Использование
+-------------
 
-Модуль Moex.pm 
+Облигации
+~~~~~~~~~
 
 Получает средневзвешенную цену предыдущего дня для облигаций на ММВБ
 
-Содержит функции:
+Функции:
 * moex_bond_ofz, Облигации в режиме T1, в основном ОФЗ. Цена не будет включать НКД
 * moex_bond, Облигации в режиме T0, все кроме ОФЗ. Цена не будет включать НКД
 * moex_bond_ofz_nkd, Облигации в режиме T1, в основном ОФЗ. Цена будет включать НКД
@@ -62,12 +99,14 @@ FQ_LOAD_QUOTELET="-defaults Micex Moex"
 ![Пример в GnuCash](../master/pic/moexbonds-example.png)
 
 Акции
------
-
-Модуль Micex.pm
+~~~~~
 
 Получает цену закрытия предыдущего торгового дня российских акций на ММВБ.
+
+Функция micex
 
 Котировки берутся с сайта http://export.rbc.ru/
 
 ![Пример в GnuCash](../master/pic/gnucash-sample.gif)
+
+Используйте модуль Moex и функцию micex из него. Объеденил модули, картинки переснимать лень.
