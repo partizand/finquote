@@ -1,5 +1,7 @@
 *.tar
 *.tar.gz
+*.bak
 debian
 debian.bak
 blib
+pm_to_blib

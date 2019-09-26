@@ -10,3 +10,4 @@ blib
 \.gz$
 debian
 debian.bak
+\.sh$

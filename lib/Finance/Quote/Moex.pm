@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 
-#    Copyright (C) 2017, Partizand https://github.com/partizand/finquote
+#    Copyright (C) 2017, Partizand
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,13 +26,15 @@ use warnings;
 use vars qw($VERSION);
 
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 # Облигации T+1 (ОФЗ)
 our $BONDS_URL_T1 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/58/securities.csv";
 # Облигации T0 (Всё остальное)
 our $BONDS_URL_T0 = "https://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/7/securities.csv";
 # Акции 
 our $STOCK_URL = "https://iss.moex.com/iss/engines/stock/markets/shares/boardgroups/57/securities.csv";
+# Rbc.ru
+our $MICEX_URL = "http://export.rbc.ru/free/micex.0/free.fcgi?period=DAILY&tickers=NULL&lastdays=5&separator=;&data_format=EXCEL&header=0";
 
 use LWP::UserAgent;
 use HTTP::Request::Common;
@@ -54,25 +56,34 @@ use HTTP::Request::Common;
 # moex_stock
 # Акции
 
+sub methods { return ( micex => \&micex ); }
 
+{
+	my @labels = qw/name last open low high close waprica date isodate currency/;
+	
+	sub labels { return ( micex => \@labels ); }
+}
 
 sub methods { return (moex_bond => \&moex_bond,
                       moex_bond_ofz => \&moex_bond_ofz,
 					  moex_stock => \&moex_stock,
 					  moex_bond_nkd => \&moex_bond_nkd,
-                      moex_bond_ofz_nkd => \&moex_bond_ofz_nkd) 
+                      moex_bond_ofz_nkd => \&moex_bond_ofz_nkd,
+                      micex => \&micex) 
 					  }
 
 {
-  my @labels = qw/name price date isodate currency/;
-
-  sub labels { return (moex_bond => \@labels,
-                       moex_bond_ofz => \@labels,
-					   moex_stock => \@labels,
-					   moex_bond_nkd => \@labels,
-                       moex_bond_ofz_nkd => \@labels) }
-}
+  my @labels_moex = qw/name price date isodate currency/;
+  my @labels_micex = qw/name last open low high close waprice date isodate currency/;
 	
+  sub labels { return (moex_bond => \@labels_moex,
+                       moex_bond_ofz => \@labels_moex,
+					   moex_stock => \@labels_moex,
+					   moex_bond_nkd => \@labels_moex,
+                       moex_bond_ofz_nkd => \@labels_moex,
+                       micex => \@labels_micex) }
+}
+# get qutes from moex.com	
 sub moex_bond_ofz
 	{
 	&moex($BONDS_URL_T1, "1", @_);
@@ -224,6 +235,92 @@ sub moex {
 		
 	
 }
+# return quotes from rbc.ru
+sub micex {
+	my $quoter = shift;
+	my @stocks = @_;
+	my $sym;
+	my $stock;
+	my %info;
+	my %stockhash;
+	my @q;
+	
+	
+	my $ua = $quoter->user_agent; #http
+	
+	foreach my $stock (@stocks) # Обнуляем признаки обработки тикеров
+	  {
+	    $stockhash{$stock} = 0;
+	  }
+
+	
+	my $url=$MICEX_URL;
+	
+		 my $response = $ua->request(GET $url); #http begin
+		unless ($response->is_success) {
+			foreach my $stock (@stocks) {
+				$info{$stock, "success"} = 0;
+				$info{$stock, "errormsg"} = "HTTP failure";
+			}
+		
+			return wantarray() ? %info : \%info;
+		     } #http end
+		
+		my $content = $response->content; #http
+		
+		
+		foreach (split(/\n/,$content)) #http
+		      {#chomp;
+		      
+		      
+		      @q = split(/;/,$_);
+		      
+		      
+		      $sym = $q[0]; #Код бумаги
+		      if ($sym) {		      
+		      
+			foreach my $stock (@stocks) {
+			if ( $sym eq $stock ) {  
+			#if ($stockhash{$stock} == 0)
+			 # {
+			    #print (Msg "Found sym $stock close=$q[5] date=$q[1] \n");
+		      $info{$stock, "symbol"} = $stock; #Код
+					$info{$stock, "name"} = $stock; 
+					$info{$stock, "currency"} = "RUB";
+					$info{$stock, "method"} = "micex";
+					$info{$stock, "open"} = $q[2];
+					  $info{$stock, "high"} = $q[3];
+					  $info{$stock, "low"} = $q[4];
+					$info{$stock, "waprice"} = $q[7];
+					$info{$stock, "close"} = $q[5];
+					#$info{$stock, "ask"} = $q[11];
+					$info{$stock, "last"} = $q[5];
+					$quoter->store_date(\%info, $stock,  {isodate => $q[1]});
+					$info{$stock, "success"} = 1;
+					$stockhash{$stock} = 1;
+					#print (Msg "Found sym $stock last=$info{$stock,'last'} date=$info{$stock,'date'} \n");  
+			#		}
+				  }
+			    }
+			}
+
+		      }
+		    # check to make sure a value was returned for every fund requested
+		foreach my $stock (keys %stockhash)
+		    {
+		    if ($stockhash{$stock} == 0)
+			{
+			$info{$stock, "success"}  = 0;
+			$info{$stock, "errormsg"} = "Stock lookup failed";
+			 }
+		    }
+		
+		
+		return wantarray() ? %info : \%info;
+		
+	
+}
+
 # возвращает ассоциативный массив - ключ - имя поля, значение - порядковый номр колонки
 # По строке с названиями полей ИмяПоля;ИмяПоля1;ИмяПоля2
 sub getfields
@@ -245,7 +342,7 @@ sub getfields
 __END__
 =head1 NAME
 
-Finance::Quote::Moex - Obtain quotes from Moex 
+Finance::Quote::Moex - Perl module. Obtain quotes from Moex exchange. 
 
 =head1 SYNOPSIS
 
@@ -257,7 +354,7 @@ Finance::Quote::Moex - Obtain quotes from Moex
 
 =head1 DESCRIPTION
 
-This module fetches bond share quotes information from the Moex http://www.moex.com. 
+This module fetches bond share quotes information from the Moex russian exchange http://www.moex.com and http://rbc.ru
  
 It's not loaded as default Finance::Quote module, so you need create it
  by Finance::Quote->new("Moex"). If you want it to load by default,
@@ -273,11 +370,11 @@ name price date isodate currency
  
 =head1 AUTHOR
 
-,Partizand, https://github.com/partizand/finquote
+Partizand, partizand@gmail.com, https://github.com/partizand/finquote
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2017 by Partizand. All rights reserved.
+Copyright (C) 2019 by Partizand. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.0.8 or,

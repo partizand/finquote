@@ -7,9 +7,8 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'Finance::Quote::Moex',
     VERSION_FROM      => 'lib/Finance/Quote/Moex.pm', 
-    PREREQ_PM         => { 'Finance::Quote' => 0 },
-    EXCLUDE_EXT	    => ['.png', 'pic'],
-    ($] >= 5.005 ?     
+    PREREQ_PM         => { 'Finance::Quote' => 0, 'LWP::UserAgent' => 0, 'HTTP::Request::Common' => 0 },
+      ($] >= 5.005 ?     
       (ABSTRACT_FROM  => 'lib/Finance/Quote/Moex.pm', # retrieve abstract from module
        AUTHOR         => 'Partizand <partizand@gmail.com>') : ()),
 ); 

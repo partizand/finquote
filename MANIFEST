@@ -1,6 +1,5 @@
 lib/Finance/Quote/Micex.pm
 lib/Finance/Quote/Moex.pm
-makedeb.sh
 Makefile
 Makefile.PL
 MANIFEST			This list of files
@@ -8,4 +7,5 @@ MANIFEST.SKIP
 MYMETA.json
 MYMETA.yml
 readme.md
+t/Moex.t
 t/quote-test.pm
