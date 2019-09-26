@@ -107,3 +107,10 @@ FQ_LOAD_QUOTELET="-defaults Micex Moex"
 ![Пример в GnuCash](../master/pic/gnucash-sample.gif)
 
 Используйте модуль Moex (тип) и функцию micex из него. Объединил модули, картинки переснимать лень.
+
+Тестирование
+------------
+
+```
+ONLINE_TEST="y" make test 
+```
