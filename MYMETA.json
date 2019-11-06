@@ -32,9 +32,7 @@
       },
       "runtime" : {
          "requires" : {
-            "Finance::Quote" : "0",
-            "HTTP::Request::Common" : "0",
-            "LWP::UserAgent" : "0"
+            "Finance::Quote" : "0"
          }
       }
    },

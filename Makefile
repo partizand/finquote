@@ -6,7 +6,7 @@
 #
 #       ANY CHANGES MADE HERE WILL BE LOST!
 #
-#   MakeMaker ARGV: ()
+#   MakeMaker ARGV: (q[INSTALLDIRS=vendor], q[OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2], q[LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro])
 #
 
 #   MakeMaker Parameters:
@@ -16,7 +16,7 @@
 #     BUILD_REQUIRES => {  }
 #     CONFIGURE_REQUIRES => {  }
 #     NAME => q[Finance::Quote::Moex]
-#     PREREQ_PM => { Finance::Quote=>q[0], HTTP::Request::Common=>q[0], LWP::UserAgent=>q[0] }
+#     PREREQ_PM => { Finance::Quote=>q[0] }
 #     TEST_REQUIRES => {  }
 #     VERSION_FROM => q[lib/Finance/Quote/Moex.pm]
 
@@ -35,7 +35,7 @@ DLEXT = so
 DLSRC = dl_dlopen.xs
 EXE_EXT = 
 FULL_AR = /usr/bin/ar
-LD = x86_64-linux-gnu-gcc
+LD = x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro
 LDDLFLAGS = -shared -L/usr/local/lib -fstack-protector-strong
 LDFLAGS =  -fstack-protector-strong -L/usr/local/lib
 LIBC = libc-2.28.so
@@ -72,9 +72,9 @@ INST_MAN1DIR = blib/man1
 INST_MAN3DIR = blib/man3
 MAN1EXT = 1p
 MAN3EXT = 3pm
-INSTALLDIRS = site
+INSTALLDIRS = vendor
 DESTDIR = 
-PREFIX = $(SITEPREFIX)
+PREFIX = $(VENDORPREFIX)
 PERLPREFIX = /usr
 SITEPREFIX = /usr/local
 VENDORPREFIX = /usr
@@ -281,6 +281,7 @@ DISTVNAME = Finance-Quote-Moex-0.3
 
 PASTHRU = LIBPERL_A="$(LIBPERL_A)"\
 	LINKTYPE="$(LINKTYPE)"\
+	OPTIMIZE="$(OPTIMIZE)"\
 	LD="$(LD)"\
 	PREFIX="$(PREFIX)"\
 	PASTHRU_DEFINE='$(DEFINE) $(PASTHRU_DEFINE)'\
@@ -503,8 +504,6 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '    - inc' >> META_new.yml
 	$(NOECHO) $(ECHO) 'requires:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Finance::Quote: '\''0'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) '  HTTP::Request::Common: '\''0'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) '  LWP::UserAgent: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'version: '\''0.3'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'x_serialization_backend: '\''CPAN::Meta::YAML version 0.018'\''' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
@@ -543,9 +542,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      },' >> META_new.json
 	$(NOECHO) $(ECHO) '      "runtime" : {' >> META_new.json
 	$(NOECHO) $(ECHO) '         "requires" : {' >> META_new.json
-	$(NOECHO) $(ECHO) '            "Finance::Quote" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "HTTP::Request::Common" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "LWP::UserAgent" : "0"' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Finance::Quote" : "0"' >> META_new.json
 	$(NOECHO) $(ECHO) '         }' >> META_new.json
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
@@ -632,7 +629,7 @@ distdir : create_distdir distmeta
 
 # --- MakeMaker dist_test section:
 disttest : distdir
-	cd $(DISTVNAME) && $(ABSPERLRUN) Makefile.PL 
+	cd $(DISTVNAME) && $(ABSPERLRUN) Makefile.PL "INSTALLDIRS=vendor" "OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2" "LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro"
 	cd $(DISTVNAME) && $(MAKE) $(PASTHRU)
 	cd $(DISTVNAME) && $(MAKE) test $(PASTHRU)
 
@@ -773,7 +770,7 @@ $(FIRST_MAKEFILE) : Makefile.PL $(CONFIGDEP)
 	-$(NOECHO) $(RM_F) $(MAKEFILE_OLD)
 	-$(NOECHO) $(MV)   $(FIRST_MAKEFILE) $(MAKEFILE_OLD)
 	- $(MAKE) $(USEMAKEFILE) $(MAKEFILE_OLD) clean $(DEV_NULL)
-	$(PERLRUN) Makefile.PL 
+	$(PERLRUN) Makefile.PL "INSTALLDIRS=vendor" "OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2" "LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro"
 	$(NOECHO) $(ECHO) "==> Your Makefile has been rebuilt. <=="
 	$(NOECHO) $(ECHO) "==> Please rerun the $(MAKE) command.  <=="
 	$(FALSE)
@@ -795,7 +792,10 @@ $(MAKE_APERL_FILE) : static $(FIRST_MAKEFILE) pm_to_blib
 	$(NOECHO) $(PERLRUNINST) \
 		Makefile.PL DIR="" \
 		MAKEFILE=$(MAKE_APERL_FILE) LINKTYPE=static \
-		MAKEAPERL=1 NORECURS=1 CCCDLFLAGS=
+		MAKEAPERL=1 NORECURS=1 CCCDLFLAGS= \
+		INSTALLDIRS=vendor \
+		OPTIMIZE='-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2' \
+		LD='x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro'
 
 
 # --- MakeMaker test section:
@@ -841,8 +841,6 @@ ppd :
 	$(NOECHO) $(ECHO) '    <AUTHOR>Partizand &lt;partizand@gmail.com&gt;</AUTHOR>' >> Finance-Quote-Moex.ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> Finance-Quote-Moex.ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Finance::Quote" />' >> Finance-Quote-Moex.ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="HTTP::Request::Common" />' >> Finance-Quote-Moex.ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="LWP::UserAgent" />' >> Finance-Quote-Moex.ppd
 	$(NOECHO) $(ECHO) '        <ARCHITECTURE NAME="x86_64-linux-gnu-thread-multi-5.28" />' >> Finance-Quote-Moex.ppd
 	$(NOECHO) $(ECHO) '        <CODEBASE HREF="" />' >> Finance-Quote-Moex.ppd
 	$(NOECHO) $(ECHO) '    </IMPLEMENTATION>' >> Finance-Quote-Moex.ppd
