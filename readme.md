@@ -47,9 +47,7 @@ make install
 
 ###  Ручная установка (не рекомендуется)
 
-Для Windows сойдёт.
-
-* Скопировать все файлы *.pm в каталог Finance/Quote (Для Win обычно c:\strawberry\perl\site\lib\Finance\Quote\, для linux /usr/share/perl5/Finance/quote)
+* Скопировать все файлы *.pm в каталог Finance/Quote (Для Win обычно c:\strawberry\perl\site\lib\Finance\Quote\, для linux /usr/share/perl5/Finance/quote, для Mac /Library/Perl/5.18/Finance/Quote/)
 
 * Добавить в quote.pm (лежит на каталог выше), ссылку на новые модули
 
