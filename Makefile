@@ -6,7 +6,7 @@
 #
 #       ANY CHANGES MADE HERE WILL BE LOST!
 #
-#   MakeMaker ARGV: (q[INSTALLDIRS=vendor], q[OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2], q[LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro])
+#   MakeMaker ARGV: (q[INSTALLDIRS=vendor], q[OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2], q[LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro])
 #
 
 #   MakeMaker Parameters:
@@ -35,7 +35,7 @@ DLEXT = so
 DLSRC = dl_dlopen.xs
 EXE_EXT = 
 FULL_AR = /usr/bin/ar
-LD = x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro
+LD = x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro
 LDDLFLAGS = -shared -L/usr/local/lib -fstack-protector-strong
 LDFLAGS =  -fstack-protector-strong -L/usr/local/lib
 LIBC = libc-2.28.so
@@ -57,11 +57,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = Finance::Quote::Moex
 NAME_SYM = Finance_Quote_Moex
-VERSION = 0.3
+VERSION = 0.4
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_3
+VERSION_SYM = 0_4
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.3
+XS_VERSION = 0.4
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -256,7 +256,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = Finance-Quote-Moex
-DISTVNAME = Finance-Quote-Moex-0.3
+DISTVNAME = Finance-Quote-Moex-0.4
 
 
 # --- MakeMaker macro section:
@@ -504,7 +504,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '    - inc' >> META_new.yml
 	$(NOECHO) $(ECHO) 'requires:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Finance::Quote: '\''0'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version: '\''0.3'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version: '\''0.4'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'x_serialization_backend: '\''CPAN::Meta::YAML version 0.018'\''' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
 	$(NOECHO) $(ECHO) Generating META.json
@@ -547,7 +547,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "version" : "0.3",' >> META_new.json
+	$(NOECHO) $(ECHO) '   "version" : "0.4",' >> META_new.json
 	$(NOECHO) $(ECHO) '   "x_serialization_backend" : "JSON::PP version 2.97001"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
 	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
@@ -629,7 +629,7 @@ distdir : create_distdir distmeta
 
 # --- MakeMaker dist_test section:
 disttest : distdir
-	cd $(DISTVNAME) && $(ABSPERLRUN) Makefile.PL "INSTALLDIRS=vendor" "OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2" "LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro"
+	cd $(DISTVNAME) && $(ABSPERLRUN) Makefile.PL "INSTALLDIRS=vendor" "OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2" "LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro"
 	cd $(DISTVNAME) && $(MAKE) $(PASTHRU)
 	cd $(DISTVNAME) && $(MAKE) test $(PASTHRU)
 
@@ -770,7 +770,7 @@ $(FIRST_MAKEFILE) : Makefile.PL $(CONFIGDEP)
 	-$(NOECHO) $(RM_F) $(MAKEFILE_OLD)
 	-$(NOECHO) $(MV)   $(FIRST_MAKEFILE) $(MAKEFILE_OLD)
 	- $(MAKE) $(USEMAKEFILE) $(MAKEFILE_OLD) clean $(DEV_NULL)
-	$(PERLRUN) Makefile.PL "INSTALLDIRS=vendor" "OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2" "LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro"
+	$(PERLRUN) Makefile.PL "INSTALLDIRS=vendor" "OPTIMIZE=-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2" "LD=x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro"
 	$(NOECHO) $(ECHO) "==> Your Makefile has been rebuilt. <=="
 	$(NOECHO) $(ECHO) "==> Please rerun the $(MAKE) command.  <=="
 	$(FALSE)
@@ -794,8 +794,8 @@ $(MAKE_APERL_FILE) : static $(FIRST_MAKEFILE) pm_to_blib
 		MAKEFILE=$(MAKE_APERL_FILE) LINKTYPE=static \
 		MAKEAPERL=1 NORECURS=1 CCCDLFLAGS= \
 		INSTALLDIRS=vendor \
-		OPTIMIZE='-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2' \
-		LD='x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro'
+		OPTIMIZE='-g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2' \
+		LD='x86_64-linux-gnu-gcc -g -O2 -fdebug-prefix-map=/home/andrey/prog/finquote/finquote=. -fstack-protector-strong -Wformat -Werror=format-security -Wl,-z,relro'
 
 
 # --- MakeMaker test section:
@@ -836,7 +836,7 @@ testdb_static :: static pure_all
 # --- MakeMaker ppd section:
 # Creates a PPD (Perl Package Description) for a binary distribution.
 ppd :
-	$(NOECHO) $(ECHO) '<SOFTPKG NAME="Finance-Quote-Moex" VERSION="0.3">' > Finance-Quote-Moex.ppd
+	$(NOECHO) $(ECHO) '<SOFTPKG NAME="Finance-Quote-Moex" VERSION="0.4">' > Finance-Quote-Moex.ppd
 	$(NOECHO) $(ECHO) '    <ABSTRACT>Perl module. Obtain quotes from Moex exchange. </ABSTRACT>' >> Finance-Quote-Moex.ppd
 	$(NOECHO) $(ECHO) '    <AUTHOR>Partizand &lt;partizand@gmail.com&gt;</AUTHOR>' >> Finance-Quote-Moex.ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> Finance-Quote-Moex.ppd

@@ -5,7 +5,7 @@ Perl модуль Finance::Quote::Moex
 
 Сделано для [GnuCash](http://www.gnucash.org/)
 
-Котировки получаются с сайтов http://rbc.ru и http://moex.com
+Котировки получаются с сайта http://moex.com
 
 Установка
 ---------
