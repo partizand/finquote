@@ -27,9 +27,15 @@ FQ_LOAD_QUOTELET=-defaults Moex
 
 ### Установка из cpan
 
-Я таки добавил модуль на cpan. Можно установить из него.
-В любой полной версии Perl: cpan Finance::Quote::Moex
-Если установлен cpanminus: cpanm Finance::Quote::Moex
+Я добавил модуль на cpan. Можно установить из него.
+В любой полной версии Perl: 
+```
+cpan Finance::Quote::Moex
+```
+Если установлен cpanminus: 
+```
+cpanm Finance::Quote::Moex
+```
 
 ### Установка на Debian/Ubuntu
 
