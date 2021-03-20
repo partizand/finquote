@@ -251,7 +251,8 @@ sub moex {
 						{
 						if ($is_bond)
 							{
-							$price = $price * 10;
+							$nominal = $q[$fields{"FACEVALUE"}]; # Номинал облигации
+							$price = $price * $nominal / 100; 
 							if ($is_bond=="2")
 								{
 								$price = $price+$q[$fields{$nkd_field}]; # Прибавляем к цене облигации стоимость НКД
