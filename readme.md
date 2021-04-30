@@ -19,7 +19,11 @@ Perl модуль Finance::Quote::Moex
 ```bash
 FQ_LOAD_QUOTELET="-defaults Moex" gnucash
 ```
-2. у GnuCash есть файл настройки среды - `/etc/gnucash/enviroment` (для linux, в остальных думаю есть подобное). Достаточно в конец добавить  
+2. у GnuCash есть файл настройки среды, который расположен
+  * для Linux `/etc/gnucash/enviroment`;
+  * для Windows `C:\Program Files (x86)\gnucash\etc\gnucash`; Редактировать из-под Администратора;
+
+Достаточно в конец добавить:
 ```
 FQ_LOAD_QUOTELET=-defaults Moex
 ```
@@ -87,6 +91,11 @@ Micex включил в Moex, поэтому модуль убрал.
 
 ```
 FQ_LOAD_QUOTELET="-defaults Moex"
+```
+### Windows. ВАЖНО!!!
+Перед первым запуском нужно в командной строке перейти в каталог `C:\Program Files (x86)\gnucash\bin` и **из-под Администратора** выполнить коанду:
+```
+perl gnc-fq-update
 ```
 
 В GnuCash заводить ценные бумаги примерно так:
