@@ -21,7 +21,7 @@ FQ_LOAD_QUOTELET="-defaults Moex" gnucash
 ```
 2. у GnuCash есть файл настройки среды, который расположен
   * для Linux `/etc/gnucash/enviroment`;
-  * для Windows `C:\Program Files (x86)\gnucash\etc\gnucash`; Редактировать из-под Администратора;
+  * для Windows `C:\Program Files (x86)\gnucash\etc\gnucash`. Редактировать из-под Администратора;
 
 Достаточно в конец добавить:
 ```
@@ -33,11 +33,11 @@ FQ_LOAD_QUOTELET=-defaults Moex
 
 Я добавил модуль на cpan. Можно установить из него.
 В любой полной версии Perl: 
-```
+```shell
 cpan Finance::Quote::Moex
 ```
 Если установлен cpanminus: 
-```
+```shell
 cpanm Finance::Quote::Moex
 ```
 
@@ -49,7 +49,7 @@ cpanm Finance::Quote::Moex
 ### Ручная сборка
 
 
-```
+```shell
 make
 make install
 ```
@@ -94,7 +94,7 @@ FQ_LOAD_QUOTELET="-defaults Moex"
 ```
 ### Windows. ВАЖНО!!!
 Перед первым запуском нужно в командной строке перейти в каталог `C:\Program Files (x86)\gnucash\bin` и **из-под Администратора** выполнить коанду:
-```
+```shell
 perl gnc-fq-update
 ```
 
