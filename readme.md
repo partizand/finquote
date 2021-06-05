@@ -21,7 +21,9 @@ FQ_LOAD_QUOTELET="-defaults Moex" gnucash
 ```
 2. у GnuCash есть файл настройки среды (общий для всех пользователей)
   * для Linux `/etc/gnucash/enviroment`;
-  * для Windows `C:\Program Files (x86)\gnucash\etc\gnucash`. Достаточно в конец добавить: 
+  * для Windows `C:\Program Files (x86)\gnucash\etc\gnucash`.  
+  
+  Достаточно в конец добавить: 
 
   ```
   FQ_LOAD_QUOTELET=-defaults Moex
