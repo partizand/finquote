@@ -149,4 +149,4 @@ ONLINE_TEST="y" make test
 Установка Finance::Quote на Windows
 -----------------------------------
 
-Для установки Finance::Quote на Windows нужно предпринять дополнительные шаги. Согласно [документации GnuCash (eng)](https://wiki.gnucash.org/wiki/Online_Quotes#Installing_Perl_on_Windows) достаточно запустить "Install Online Price Retrieval" ярлык из меню пуск в группе GnuCash. Эту команду можно запустить через bat файл в недрах каталога установленного GnuCash. Она установит perl и все необходимые модули.
+Для установки Finance::Quote на Windows нужно предпринять дополнительные шаги. Согласно [документации GnuCash (eng)](https://wiki.gnucash.org/wiki/Online_Quotes#Installing_Perl_on_Windows) достаточно запустить "Install Online Price Retrieval" ярлык из меню пуск в группе GnuCash. Эту команду можно запустить через bat файл в недрах каталога установленного GnuCash `C:\Program Files (x86)\gnucash\bin\install-fq-mods.cmd`. Она установит perl и все необходимые модули.
