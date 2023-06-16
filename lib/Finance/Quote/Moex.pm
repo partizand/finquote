@@ -45,14 +45,6 @@ our %bond_group_urls = (tplus => "58", # Т+: Основной режим - бе
 use LWP::UserAgent;
 use HTTP::Request::Common;
 
-sub methods { return ( micex => \&micex ); }
-
-{
-	my @labels = qw/name last open low high close waprica date isodate currency/;
-	
-	sub labels { return ( micex => \@labels ); }
-}
-
 sub methods { return (moex_stock => \&moex_stock,
                                             
                       moex_bond_tplus => \&moex_bond_tplus,
@@ -77,8 +69,7 @@ sub methods { return (moex_stock => \&moex_stock,
 
 {
   my @labels_moex = qw/name price date isodate currency/;
-  my @labels_micex = qw/name last open low high close waprice date isodate currency/;
-	
+
   sub labels { return (moex_bond_ofz => \@labels_moex,
 					   moex_stock => \@labels_moex,
 					   moex_bond_ofz_nkd => \@labels_moex,
@@ -97,8 +88,7 @@ sub methods { return (moex_stock => \&moex_stock,
 					   
 					   moex_bond_tplus_pir_usd => \@labels_moex,
 					   moex_bond_tplus_pir_usd_nkd => \@labels_moex,
-					   
-                       #micex => \@labels_micex
+
                        ) }
 }
 # get qutes from moex.com	
